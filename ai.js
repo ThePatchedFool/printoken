@@ -16,12 +16,11 @@
 
   // ── Colour → evocative mood ───────────────────────────────────────────────
   const COLOR_MOOD = {
-    W: 'divine, radiant, holy',
-    U: 'arcane, ethereal, mystical',
-    B: 'dark, shadowy, sinister',
-    R: 'fiery, wild, explosive',
-    G: 'natural, verdant, primal',
-    C: 'mechanical, metallic, constructed',
+    W: 'peace, law, structure, selflessness, equality',
+    U: 'knowledge, deceit, caution, deliberation, perfection',
+    B: 'power, self-interest, death, sacrifice, uninhibitedness',
+    R: 'freedom, emotion, action, impulse, destruction',
+    G: 'nature, wildlife, connection, spirituality, tradition',
   };
 
   // Per-style prompt prefixes — each tuned for B&W thermal output.
