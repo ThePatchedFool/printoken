@@ -479,9 +479,9 @@ function drawArt(img, x, y, w, h) {
   // for line art / illustration).
   const ar = img.width / img.height;
   let dw = w, dh = h;
-  // Contain-fit: scale to fill one dimension, letterbox the other with white.
-  if (ar > w / h) { dw = w; dh = w / ar; }
-  else { dh = h; dw = h * ar; }
+  // Cover-fit: scale to fill the box, cropping the excess.
+  if (ar > w / h) { dh = h; dw = h * ar; }
+  else { dw = w; dh = w / ar; }
   const dx = x + (w - dw) / 2;
   const dy = y + (h - dh) / 2;
 
