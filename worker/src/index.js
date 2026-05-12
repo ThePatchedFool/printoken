@@ -1,6 +1,7 @@
 // Printoken AI proxy — Cloudflare Worker
 //
-// Receives { prompt } from the browser, proxies to fal.ai Flux Schnell,
+// Receives { prompt, style, name, types, subtypes, colors, description }
+// from the browser, proxies to fal.ai Flux Schnell, logs inputs to D1,
 // and returns { imageUrl }.
 //
 // Protection: CORS origin allowlist + fal.ai spend cap.
@@ -10,7 +11,6 @@
 
 const ALLOWED_ORIGINS = [
   'https://thepatchedfool.github.io',
-  // Add local dev origins as needed:
   'http://localhost:8080',
   'http://localhost:5500',
   'http://127.0.0.1:5500',
@@ -20,7 +20,7 @@ const ALLOWED_ORIGINS = [
 const FAL_ENDPOINT = 'https://fal.run/fal-ai/flux/schnell';
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const origin = request.headers.get('Origin') || '';
     const corsOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : null;
 
@@ -43,7 +43,15 @@ export default {
       return jsonError('Invalid JSON', 400, corsOrigin);
     }
 
-    const { prompt } = body;
+    const {
+      prompt,
+      style       = '',
+      name        = '',
+      types       = '',
+      subtypes    = '',
+      colors      = '',
+      description = '',
+    } = body;
 
     // ── Validate ────────────────────────────────────────────────────────────
     if (!prompt || typeof prompt !== 'string' || !prompt.trim()) {
@@ -64,8 +72,8 @@ export default {
         },
         body: JSON.stringify({
           prompt: prompt.trim(),
-          image_size: 'square_hd',       // 1024×1024
-          num_inference_steps: 4,         // Schnell is tuned for 4 steps
+          image_size: 'square_hd',
+          num_inference_steps: 4,
           num_images: 1,
           enable_safety_checker: true,
         }),
@@ -86,6 +94,17 @@ export default {
     if (!imageUrl) {
       return jsonError('No image returned by fal.ai', 502, corsOrigin);
     }
+
+    // ── Log to D1 (non-blocking — never delays the response) ────────────────
+    ctx.waitUntil(
+      env.DB.prepare(
+        `INSERT INTO prompts (ts, style, name, types, subtypes, colors, description, prompt)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+      )
+      .bind(Date.now(), style, name, types, subtypes, colors, description, prompt.trim())
+      .run()
+      .catch(err => console.error('D1 insert failed:', err))
+    );
 
     return new Response(JSON.stringify({ imageUrl }), {
       status: 200,

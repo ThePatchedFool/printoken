@@ -5,4 +5,8 @@ workers_dev = true
 
 # Secrets are NOT stored here — set them with:
 #   wrangler secret put FAL_KEY
-#   wrangler secret put TURNSTILE_SECRET
+
+[[d1_databases]]
+binding = "DB"
+database_name = "printoken-logs"
+database_id = "7c6e5072-ac53-4a1e-878c-62ed4191c7d2"

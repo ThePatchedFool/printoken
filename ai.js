@@ -38,15 +38,18 @@
   const STYLE_SUFFIX = 'no grey tones, suitable for thermal printing, fantasy card art';
 
   // ── Prompt builder ────────────────────────────────────────────────────────
+  // Returns { prompt, fields } — prompt is the assembled fal.ai string,
+  // fields are the raw inputs sent to the Worker for logging.
   function buildPrompt() {
     const form = document.getElementById('form');
-    if (!form) return ART_STYLES.woodcut + ', ' + STYLE_SUFFIX;
+    const fallback = { prompt: ART_STYLES.woodcut + ', ' + STYLE_SUFFIX, fields: {} };
+    if (!form) return fallback;
     const fd = new FormData(form);
 
-    const styleKey  = (fd.get('ai-style') || 'woodcut').toString();
+    const styleKey    = (fd.get('ai-style') || 'woodcut').toString();
     const stylePrefix = ART_STYLES[styleKey] || ART_STYLES.woodcut;
-    const name      = (fd.get('name')    || '').toString().trim();
-    const userDesc  = (fd.get('ai-desc') || '').toString().trim();
+    const name        = (fd.get('name')    || '').toString().trim();
+    const userDesc    = (fd.get('ai-desc') || '').toString().trim();
 
     let types = [], subtypes = [];
     try { types    = JSON.parse(fd.get('types')    || '[]'); } catch {}
@@ -64,9 +67,21 @@
     if (userDesc)        parts.push(userDesc);
 
     const subject = parts.length ? parts.join(', ') : '';
-    return subject
+    const prompt = subject
       ? `${stylePrefix}, ${subject}, ${STYLE_SUFFIX}`
       : `${stylePrefix}, ${STYLE_SUFFIX}`;
+
+    return {
+      prompt,
+      fields: {
+        style:       styleKey,
+        name,
+        types:       types.join(', '),
+        subtypes:    subtypes.join(', '),
+        colors:      colors.join(', '),
+        description: userDesc,
+      },
+    };
   }
 
   // ── UI elements ───────────────────────────────────────────────────────────
@@ -103,12 +118,12 @@
     setStatus('Generating…');
 
     try {
-      const prompt = buildPrompt();
+      const { prompt, fields } = buildPrompt();
 
       const resp = await fetch(WORKER_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt }),
+        body: JSON.stringify({ prompt, ...fields }),
       });
 
       if (!resp.ok) {
