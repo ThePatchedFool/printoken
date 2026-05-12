@@ -73,13 +73,22 @@ main {
 
 /* ----- Cross-page navigation ----- */
 
-.create-link, .back-link {
-  text-align: center;
-  margin: 0.25rem 0 1rem;
-  font-size: 0.9rem;
+.page-nav {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 0.5rem 0 0;
+  flex-wrap: wrap;
 }
-.create-link a, .back-link a { color: #111; }
-.back-link { margin: 0.4rem 0 0; font-size: 0.8rem; color: #666; }
+.page-nav a.ghost {
+  font: inherit;
+  font-size: 0.8rem;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.45rem 0.9rem;
+  min-height: 44px; /* comfortable tap target */
+}
 
 /* ----- Search ----- */
 
