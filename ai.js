@@ -167,6 +167,14 @@
   generateBtn.addEventListener('click', generate);
   if (regenBtn) regenBtn.addEventListener('click', generate);
 
+  // Enter in the description field triggers Generate (no multi-line needed).
+  const descTextarea = document.querySelector('textarea[name=ai-desc]');
+  if (descTextarea) {
+    descTextarea.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { e.preventDefault(); generate(); }
+    });
+  }
+
   // Exposed for console debugging.
   window.Printoken.ai = { generate, buildPrompt };
 })();

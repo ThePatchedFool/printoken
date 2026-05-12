@@ -30,6 +30,11 @@
         </div>
         <div class="art-controls">
           <input type="file" name="art" accept="image/*" aria-label="Art">
+          <div class="ai-row">
+            <textarea name="ai-desc" rows="1" placeholder="Describe the art…" aria-label="Art description for AI generation"></textarea>
+            <button type="button" id="ai-generate">✦ Generate</button>
+            <button type="button" id="ai-regenerate" class="ghost" hidden aria-label="Regenerate">↺</button>
+          </div>
           <select name="ai-style" aria-label="Art style">
             <option value="woodcut">Woodcut</option>
             <option value="cartoon">Cartoon</option>
@@ -40,11 +45,6 @@
             <option value="silhouette">Silhouette</option>
             <option value="stick">Stick figure</option>
           </select>
-          <div class="ai-row">
-            <textarea name="ai-desc" rows="1" placeholder="Describe the art…" aria-label="Art description for AI generation"></textarea>
-            <button type="button" id="ai-generate">✦ Generate</button>
-            <button type="button" id="ai-regenerate" class="ghost" hidden aria-label="Regenerate">↺</button>
-          </div>
           <p class="ai-status" id="ai-status" hidden></p>
         </div>
       </fieldset>
@@ -72,9 +72,9 @@
       </fieldset>
 
       <fieldset class="card-row pt-row" aria-label="Power and toughness">
-        <input type="text" name="power" inputmode="numeric" placeholder="1" aria-label="Power">
+        <input type="text" name="power" inputmode="numeric" placeholder="P" aria-label="Power">
         <span class="slash">/</span>
-        <input type="text" name="toughness" inputmode="numeric" placeholder="1" aria-label="Toughness">
+        <input type="text" name="toughness" inputmode="numeric" placeholder="T" aria-label="Toughness">
       </fieldset>
      </div><!-- /.card-form -->
 

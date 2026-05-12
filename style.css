@@ -603,6 +603,10 @@ button:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
   font-size: 0.7rem;
   padding: 2px 4px;
 }
+.art-controls select {
+  font-size: 0.75rem;
+  padding: 3px 4px;
+}
 .ai-row {
   display: flex;
   gap: 5px;
