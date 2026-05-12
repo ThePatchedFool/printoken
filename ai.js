@@ -24,25 +24,29 @@
     C: 'mechanical, metallic, constructed',
   };
 
-  // Style prefix baked into every prompt — optimised for Flux Schnell + B&W thermal.
-  const STYLE_PREFIX = [
-    'black and white ink illustration',
-    'woodcut style',
-    'high contrast',
-    'bold line art',
-    'fantasy card art',
-    'no grey tones',
-    'suitable for thermal printing',
-  ].join(', ');
+  // Per-style prompt prefixes — each tuned for B&W thermal output.
+  const ART_STYLES = {
+    woodcut:    'black and white woodcut print, bold relief lines, high contrast',
+    cartoon:    'black and white cartoon, thick outlines, simple bold shapes, comic strip style',
+    fantasy:    'black and white fantasy pen and ink, fine crosshatching, detailed, Tolkien style',
+    engraving:  'black and white copper engraving, fine parallel lines, Victorian natural history style',
+    ukiyoe:     'black and white Japanese ukiyo-e woodblock print, flowing lines, flat shapes, Hokusai style',
+    sketch:     'black and white pencil sketch, rough graphite lines, loose hand-drawn, expressive',
+    silhouette: 'pure black silhouette on white, no interior detail, stark flat shape',
+    stick:      'crude stick figure drawing, simple black lines, childlike, deliberately naive',
+  };
+  const STYLE_SUFFIX = 'no grey tones, suitable for thermal printing, fantasy card art';
 
   // ── Prompt builder ────────────────────────────────────────────────────────
   function buildPrompt() {
     const form = document.getElementById('form');
-    if (!form) return STYLE_PREFIX;
+    if (!form) return ART_STYLES.woodcut + ', ' + STYLE_SUFFIX;
     const fd = new FormData(form);
 
-    const name     = (fd.get('name')    || '').toString().trim();
-    const userDesc = (fd.get('ai-desc') || '').toString().trim();
+    const styleKey  = (fd.get('ai-style') || 'woodcut').toString();
+    const stylePrefix = ART_STYLES[styleKey] || ART_STYLES.woodcut;
+    const name      = (fd.get('name')    || '').toString().trim();
+    const userDesc  = (fd.get('ai-desc') || '').toString().trim();
 
     let types = [], subtypes = [];
     try { types    = JSON.parse(fd.get('types')    || '[]'); } catch {}
@@ -51,15 +55,18 @@
     const colors = fd.getAll('color').map(String);
 
     const parts = [];
-    if (name)           parts.push(name);
-    if (types.length)   parts.push(types.join(' ').toLowerCase());
+    if (name)            parts.push(name);
+    if (types.length)    parts.push(types.join(' ').toLowerCase());
     if (subtypes.length) parts.push(subtypes.join(' ').toLowerCase());
 
     const moods = colors.map(c => COLOR_MOOD[c]).filter(Boolean);
-    if (moods.length)   parts.push(moods.join(', '));
-    if (userDesc)       parts.push(userDesc);
+    if (moods.length)    parts.push(moods.join(', '));
+    if (userDesc)        parts.push(userDesc);
 
-    return parts.length ? `${STYLE_PREFIX}, ${parts.join(', ')}` : STYLE_PREFIX;
+    const subject = parts.length ? parts.join(', ') : '';
+    return subject
+      ? `${stylePrefix}, ${subject}, ${STYLE_SUFFIX}`
+      : `${stylePrefix}, ${STYLE_SUFFIX}`;
   }
 
   // ── UI elements ───────────────────────────────────────────────────────────
@@ -84,23 +91,6 @@
   }
 
   // ── Turnstile ─────────────────────────────────────────────────────────────
-  // Token is stored on window._tsToken by an inline script in the HTML
-  // so it survives the async/defer race between Turnstile and ai.js.
-
-  // Poll until a token arrives (usually <1 s after reset) or timeout.
-  function awaitToken(ms = 6000) {
-    if (window._tsToken) return Promise.resolve(window._tsToken);
-    return new Promise((resolve, reject) => {
-      const deadline = Date.now() + ms;
-      const id = setInterval(() => {
-        if (window._tsToken) { clearInterval(id); resolve(window._tsToken); }
-        else if (Date.now() > deadline) {
-          clearInterval(id);
-          reject(new Error('Verification timed out — please try again.'));
-        }
-      }, 100);
-    });
-  }
 
   // ── Generate ──────────────────────────────────────────────────────────────
   async function generate() {
@@ -110,22 +100,15 @@
     }
 
     setLoading(true);
-    setStatus('Verifying…');
+    setStatus('Generating…');
 
     try {
-      // Consume the current token, then reset the widget so the next call
-      // gets a fresh one (tokens are single-use).
-      const token = await awaitToken();
-      window._tsToken = null;
-      if (window.turnstile) window.turnstile.reset('#turnstile-widget');
-
-      setStatus('Generating…');
       const prompt = buildPrompt();
 
       const resp = await fetch(WORKER_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt, turnstileToken: token }),
+        body: JSON.stringify({ prompt }),
       });
 
       if (!resp.ok) {

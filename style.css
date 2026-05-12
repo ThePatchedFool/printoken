@@ -236,15 +236,15 @@ details.advanced[open] > summary::after { content: " ▴"; }
   display: grid;
   /* Loosely follows the M15 template proportions, but the name and type rows
      get a UX-friendly minimum so their controls aren't squashed. */
-  grid-template-rows: 44fr 8fr 260fr 14fr 56fr 14fr 130fr;
+  /* Row heights derived from M15 template proportions (375×523).
+     Type row is `auto` so it expands when many chips are added. */
+  grid-template-rows: 48px 9px 280px 15px auto 15px 143px;
   grid-template-columns: 1fr;
   gap: 0;
   box-shadow: 0 6px 24px rgba(0,0,0,0.08);
   position: relative;
-  /* Card aspect: 375 × 523. */
-  aspect-ratio: 375 / 523;
-  min-height: 580px;
-  overflow: hidden; /* clip any row corners against the rounded card edge */
+  min-height: 560px;
+  overflow: hidden; /* clip row corners against the rounded card edge */
 }
 
 /* Spacer rows (the gaps) — empty divs would work, but we let grid eat them */

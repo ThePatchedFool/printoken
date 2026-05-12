@@ -30,6 +30,16 @@
         </div>
         <div class="art-controls">
           <input type="file" name="art" accept="image/*" aria-label="Art">
+          <select name="ai-style" aria-label="Art style">
+            <option value="woodcut">Woodcut</option>
+            <option value="cartoon">Cartoon</option>
+            <option value="fantasy">Traditional fantasy</option>
+            <option value="engraving">Engraving</option>
+            <option value="ukiyoe">Ukiyo-e</option>
+            <option value="sketch">Pencil sketch</option>
+            <option value="silhouette">Silhouette</option>
+            <option value="stick">Stick figure</option>
+          </select>
           <div class="ai-row">
             <textarea name="ai-desc" rows="1" placeholder="Describe the art…" aria-label="Art description for AI generation"></textarea>
             <button type="button" id="ai-generate">✦ Generate</button>
@@ -104,15 +114,6 @@
           </label>
         </div>
       </details>
-      <!-- Cloudflare Turnstile — invisible challenge, no user puzzle.
-           Replace data-sitekey with your site key from dash.cloudflare.com → Turnstile. -->
-      <div id="turnstile-widget" class="cf-turnstile"
-           data-sitekey="0x4AAAAAADN2d7TdJmlhSqV5"
-           data-callback="onTurnstileToken"
-           data-expired-callback="onTurnstileExpired"
-           data-error-callback="onTurnstileError"
-           data-size="invisible">
-      </div>
     </form>
 
     <section id="preview-wrap">
@@ -122,15 +123,6 @@
   </section>
 </main>
 
-<script>
-// Defined inline so the callback exists before the async Turnstile script
-// fires — ai.js (defer) may not have loaded yet when the token arrives.
-window._tsToken = null;
-window.onTurnstileToken   = function(t) { window._tsToken = t; };
-window.onTurnstileExpired = function()  { window._tsToken = null; };
-window.onTurnstileError   = function()  { window._tsToken = null; };
-</script>
-<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async></script>
 <script src="utils.js" defer></script>
 <script src="catalog.js" defer></script>
 <script src="tagpicker.js" defer></script>

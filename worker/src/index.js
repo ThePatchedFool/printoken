@@ -1,14 +1,13 @@
 // Printoken AI proxy — Cloudflare Worker
 //
-// Receives { prompt, turnstileToken } from the browser, verifies the Turnstile
-// token, then proxies to fal.ai Flux Schnell and returns { imageUrl }.
+// Receives { prompt } from the browser, proxies to fal.ai Flux Schnell,
+// and returns { imageUrl }.
+//
+// Protection: CORS origin allowlist + fal.ai spend cap.
 //
 // Secrets (set via `wrangler secret put`, never commit):
-//   FAL_KEY          — your fal.ai API key
-//   TURNSTILE_SECRET — the secret key from your Cloudflare Turnstile site
+//   FAL_KEY — your fal.ai API key
 
-// Browsers must be on one of these origins. Direct curl/script calls bypass
-// CORS but are blocked by Turnstile token verification.
 const ALLOWED_ORIGINS = [
   'https://thepatchedfool.github.io',
   // Add local dev origins as needed:
@@ -44,19 +43,15 @@ export default {
       return jsonError('Invalid JSON', 400, corsOrigin);
     }
 
-    const { prompt, turnstileToken } = body;
+    const { prompt } = body;
 
-    // ── Validate inputs ─────────────────────────────────────────────────────
+    // ── Validate ────────────────────────────────────────────────────────────
     if (!prompt || typeof prompt !== 'string' || !prompt.trim()) {
       return jsonError('prompt is required', 400, corsOrigin);
     }
     if (prompt.length > 600) {
       return jsonError('prompt too long (max 600 chars)', 400, corsOrigin);
     }
-    // ── Turnstile verification ──────────────────────────────────────────────
-    // NOTE: Cloudflare Workers cannot make subrequests to challenges.cloudflare.com
-    // (the siteverify endpoint returns 405). Skipped for now — CORS origin check
-    // + fal.ai spend cap are the active protections. TODO: revisit.
 
     // ── Call fal.ai ─────────────────────────────────────────────────────────
     let falResp;
@@ -69,8 +64,8 @@ export default {
         },
         body: JSON.stringify({
           prompt: prompt.trim(),
-          image_size: 'square_hd',        // 1024×1024
-          num_inference_steps: 4,          // Schnell is tuned for 4 steps
+          image_size: 'square_hd',       // 1024×1024
+          num_inference_steps: 4,         // Schnell is tuned for 4 steps
           num_images: 1,
           enable_safety_checker: true,
         }),
@@ -100,27 +95,6 @@ export default {
 };
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
-
-async function verifyTurnstile(token, secret, request) {
-  const ip = request.headers.get('CF-Connecting-IP') || '';
-  const params = new URLSearchParams();
-  params.append('secret', secret);
-  params.append('response', token);
-  if (ip) params.append('remoteip', ip);
-  try {
-    const resp = await fetch('https://challenges.cloudflare.com/turnstile/v1/siteverify', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: params,
-    });
-    const json = await resp.json();
-    console.log('Turnstile siteverify:', JSON.stringify(json));
-    return json.success === true;
-  } catch (err) {
-    console.error('Turnstile fetch error:', err);
-    return false;
-  }
-}
 
 function corsHeaders(origin) {
   if (!origin) return {};
