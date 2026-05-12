@@ -632,6 +632,13 @@ function setInputValue(name, value) {
   const el = form.elements[name];
   if (!el) return;
   el.value = value ?? '';
+  if (name === 'power' || name === 'toughness') sizePtInput(el);
+}
+
+// Resize a P/T input to fit its content, expanding leftward (the box is
+// right-anchored so it naturally grows toward the left).
+function sizePtInput(el) {
+  el.style.width = Math.max(el.value.length, 1) + 'ch';
 }
 
 // Inject an already-loaded HTMLImageElement as the card art and re-render.
@@ -680,6 +687,12 @@ window.Printoken.populateState = function populateState(data) {
 
   safeRender();
 };
+
+// Auto-size P/T inputs on direct user input.
+for (const name of ['power', 'toughness']) {
+  const el = form.elements[name];
+  if (el) el.addEventListener('input', () => sizePtInput(el));
+}
 
 // initial paint — wait for the custom fonts so first measure is accurate.
 safeRender();
