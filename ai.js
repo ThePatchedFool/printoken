@@ -84,19 +84,16 @@
   }
 
   // ── Turnstile ─────────────────────────────────────────────────────────────
-  // These globals are called by the Turnstile script via data-callback attrs.
-  let _token = null;
-  window.onTurnstileToken   = t  => { _token = t; };
-  window.onTurnstileExpired = () => { _token = null; };
-  window.onTurnstileError   = () => { _token = null; };
+  // Token is stored on window._tsToken by an inline script in the HTML
+  // so it survives the async/defer race between Turnstile and ai.js.
 
   // Poll until a token arrives (usually <1 s after reset) or timeout.
   function awaitToken(ms = 6000) {
-    if (_token) return Promise.resolve(_token);
+    if (window._tsToken) return Promise.resolve(window._tsToken);
     return new Promise((resolve, reject) => {
       const deadline = Date.now() + ms;
       const id = setInterval(() => {
-        if (_token) { clearInterval(id); resolve(_token); }
+        if (window._tsToken) { clearInterval(id); resolve(window._tsToken); }
         else if (Date.now() > deadline) {
           clearInterval(id);
           reject(new Error('Verification timed out — please try again.'));
@@ -119,7 +116,7 @@
       // Consume the current token, then reset the widget so the next call
       // gets a fresh one (tokens are single-use).
       const token = await awaitToken();
-      _token = null;
+      window._tsToken = null;
       if (window.turnstile) window.turnstile.reset('#turnstile-widget');
 
       setStatus('Generating…');

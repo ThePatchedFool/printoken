@@ -118,6 +118,14 @@
   </section>
 </main>
 
+<script>
+// Defined inline so the callback exists before the async Turnstile script
+// fires — ai.js (defer) may not have loaded yet when the token arrives.
+window._tsToken = null;
+window.onTurnstileToken   = function(t) { window._tsToken = t; };
+window.onTurnstileExpired = function()  { window._tsToken = null; };
+window.onTurnstileError   = function()  { window._tsToken = null; };
+</script>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async></script>
 <script src="utils.js" defer></script>
 <script src="catalog.js" defer></script>
