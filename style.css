@@ -215,6 +215,83 @@ details.advanced[open] > summary::after { content: " ▴"; }
 .advanced-grid input[type=range] { width: 100%; }
 .advanced-grid output { font-size: 0.7rem; color: #888; align-self: flex-end; }
 
+/* ----- Momir Basic ----- */
+
+.momir-intro {
+  text-align: center;
+  color: #666;
+  font-size: 0.9rem;
+  margin: 0 0 1rem;
+}
+
+.momir-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.momir-cmc-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.momir-cmc-val {
+  font-size: 2.5rem;
+  font-weight: 700;
+  min-width: 2.5rem;
+  text-align: center;
+  line-height: 1;
+}
+
+#momir-preview:not([hidden]) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+#momir-canvases {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.momir-face {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.momir-face-label {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #555;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.momir-canvas {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  width: min(100%, 320px);
+  height: auto;
+  image-rendering: pixelated;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.momir-face button { width: 100%; max-width: 320px; }
+
 /* ----- Card-shaped form, proportions from M15 token template ----- */
 /* Template grid: 375 × 523, with regions
      name  y 26-54   (28u)

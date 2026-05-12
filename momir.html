@@ -4,59 +4,65 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#1a1209">
-<title>Printoken — Search MTG tokens</title>
+<title>Printoken — Momir Basic</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
-<body data-page="search">
+<body data-page="momir">
 <header>
   <a class="logo" href="index.html"><h1>Printoken</h1></a>
   <p class="tag">Print MTG tokens.</p>
+  <p class="back-link"><a href="index.html">← Search instead</a></p>
 </header>
 
 <main>
-  <section id="view-search">
-    <div id="search-pane">
-      <form id="search-form" class="search-bar" autocomplete="off">
-        <input type="search" name="q" placeholder="Search e.g. Goblin, Treasure, Saproling" aria-label="Search" autofocus>
-        <label class="search-toggle"><input type="checkbox" name="tokens-only" checked> Tokens &amp; helpers only</label>
-        <button type="submit">Search</button>
-      </form>
-      <div id="search-status" class="search-status" aria-live="polite"></div>
-      <p class="create-link"><a href="create.html">Need a custom token? Make one →</a></p>
-      <p class="create-link"><a href="momir.html">Playing Momir Basic? →</a></p>
-      <div id="search-results" class="search-results"></div>
+  <section id="view-momir">
+
+    <div id="momir-pane">
+      <p class="momir-intro">Pick a mana value. Get a random creature.</p>
+      <div class="momir-controls">
+        <div class="momir-cmc-row">
+          <button type="button" id="momir-dec" class="ghost" aria-label="Decrease mana value">−</button>
+          <span id="momir-cmc-val" class="momir-cmc-val" aria-live="polite">3</span>
+          <button type="button" id="momir-inc" class="ghost" aria-label="Increase mana value">+</button>
+        </div>
+        <button type="button" id="momir-roll">Roll</button>
+      </div>
+      <div id="momir-status" class="search-status" aria-live="polite"></div>
     </div>
 
-    <div id="search-preview" hidden>
+    <div id="momir-preview" hidden>
       <div class="preview-bar">
-        <button type="button" id="search-back" class="ghost">← Back to results</button>
-        <span id="search-preview-name"></span>
+        <button type="button" id="momir-reroll" class="ghost">↺ Reroll</button>
+        <span id="momir-card-name"></span>
       </div>
-      <canvas id="search-canvas" aria-label="Dithered card preview"></canvas>
+
+      <div id="momir-canvases"></div>
+
       <fieldset class="output">
         <legend>Output</legend>
         <label>Paper width
-          <select name="search-paper">
+          <select name="momir-paper">
             <option value="53">53 mm (Phomemo)</option>
             <option value="80">80 mm</option>
             <option value="custom-mtg">63 mm (standard MTG)</option>
           </select>
         </label>
         <label>DPI
-          <select name="search-dpi">
+          <select name="momir-dpi">
             <option value="203" selected>203 (thermal)</option>
             <option value="300">300</option>
           </select>
         </label>
       </fieldset>
+
       <details class="advanced">
         <summary>Advanced</summary>
         <div class="advanced-grid">
           <label>Style
-            <select name="search-algo">
+            <select name="momir-algo">
               <option value="none" selected>None — let the printer dither</option>
               <option value="atkinson">Crisp (Atkinson)</option>
               <option value="floyd">Detailed (Floyd–Steinberg)</option>
@@ -64,20 +70,20 @@
             </select>
           </label>
           <label>Density
-            <input type="range" name="search-density" min="0" max="100" value="50">
-            <output for="search-density" id="search-density-out">50</output>
+            <input type="range" name="momir-density" min="0" max="100" value="50">
+            <output for="momir-density" id="momir-density-out">50</output>
           </label>
           <label class="inline">
-            <input type="checkbox" name="search-sharpen"> Sharpen
+            <input type="checkbox" name="momir-sharpen"> Sharpen
           </label>
         </div>
       </details>
-      <button type="button" id="search-save">Save image</button>
     </div>
+
   </section>
 </main>
 
 <script src="utils.js" defer></script>
-<script src="search.js" defer></script>
+<script src="momir.js" defer></script>
 </body>
 </html>
