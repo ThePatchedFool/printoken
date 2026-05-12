@@ -45,6 +45,7 @@ export default {
 
     const {
       prompt,
+      seed,
       style       = '',
       name        = '',
       types       = '',
@@ -76,6 +77,7 @@ export default {
           num_inference_steps: 4,
           num_images: 1,
           enable_safety_checker: true,
+          seed: Number.isInteger(seed) ? seed : Math.floor(Math.random() * 2_147_483_647),
         }),
       });
     } catch (err) {
