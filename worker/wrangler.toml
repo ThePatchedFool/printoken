@@ -1,0 +1,8 @@
+name = "printoken-ai"
+main = "src/index.js"
+compatibility_date = "2025-01-01"
+workers_dev = true
+
+# Secrets are NOT stored here — set them with:
+#   wrangler secret put FAL_KEY
+#   wrangler secret put TURNSTILE_SECRET

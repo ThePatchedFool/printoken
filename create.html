@@ -25,7 +25,14 @@
 
       <fieldset class="card-row art-row">
         <input type="file" name="art" accept="image/*" aria-label="Art">
-        <p class="hint">AI generation coming soon.</p>
+        <div class="ai-panel">
+          <textarea name="ai-desc" rows="2" placeholder="Describe the art… (optional)" aria-label="Art description for AI generation"></textarea>
+          <div class="ai-controls">
+            <button type="button" id="ai-generate">✦ Generate art</button>
+            <button type="button" id="ai-regenerate" class="ghost" hidden aria-label="Regenerate">↺</button>
+          </div>
+          <p class="ai-status" id="ai-status" hidden></p>
+        </div>
       </fieldset>
 
       <fieldset class="card-row type-row">
@@ -77,7 +84,7 @@
         <summary>Advanced</summary>
         <div class="advanced-grid">
           <label>Style
-            <select name="algo">
+           <select name="algo">
               <option value="none" selected>None — let the printer dither</option>
               <option value="atkinson">Crisp (Atkinson)</option>
               <option value="floyd">Detailed (Floyd–Steinberg)</option>
@@ -93,6 +100,15 @@
           </label>
         </div>
       </details>
+      <!-- Cloudflare Turnstile — invisible challenge, no user puzzle.
+           Replace data-sitekey with your site key from dash.cloudflare.com → Turnstile. -->
+      <div id="turnstile-widget" class="cf-turnstile"
+           data-sitekey="0x4AAAAAADN2d7TdJmlhSqV5"
+           data-callback="onTurnstileToken"
+           data-expired-callback="onTurnstileExpired"
+           data-error-callback="onTurnstileError"
+           data-size="invisible">
+      </div>
     </form>
 
     <section id="preview-wrap">
@@ -102,9 +118,11 @@
   </section>
 </main>
 
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async></script>
 <script src="utils.js" defer></script>
 <script src="catalog.js" defer></script>
 <script src="tagpicker.js" defer></script>
 <script src="render.js" defer></script>
+<script src="ai.js" defer></script>
 </body>
 </html>

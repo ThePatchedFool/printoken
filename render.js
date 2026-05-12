@@ -633,6 +633,13 @@ function setInputValue(name, value) {
   el.value = value ?? '';
 }
 
+// Inject an already-loaded HTMLImageElement as the card art and re-render.
+// Called by ai.js after a successful generation.
+window.Printoken.setArt = function setArt(img) {
+  state.art = img || null;
+  safeRender();
+};
+
 // Programmatic state population — kept available for future flows
 // (e.g. AI generation may want to drop generated art into the form).
 window.Printoken.populateState = function populateState(data) {
