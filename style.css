@@ -654,3 +654,305 @@ button:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
   text-align: center;
 }
 .ai-status.ai-status--error { color: #b00; }
+
+/* ═══════════════════════════════════════════════════════════════
+   RECEIPT THEME  (receipt-theme branch)
+   Mimics thermal receipt paper: cream stock, Courier, dashes.
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  --bg:     #faf6ee;   /* warm cream — "unprinted" receipt stock */
+  --ink:    #1a1209;   /* near-black thermal ink */
+  --mid:    #8a7d6a;   /* faded mid-tone */
+  --line:   #c8bfaf;   /* dashed border colour */
+  --roll-shadow: rgba(26,18,9,.13);
+  font-family: 'Courier Prime', 'Courier New', Courier, monospace;
+}
+
+/* ── Base ── */
+body {
+  background: #e8e0d0;  /* slightly darker surround — "counter surface" */
+}
+
+/* Receipt "paper roll" strip centred on the page */
+main {
+  background: var(--bg);
+  box-shadow: 2px 0 8px var(--roll-shadow), -2px 0 8px var(--roll-shadow);
+  max-width: 540px;
+  padding: 1.5rem 1.25rem 3rem;
+}
+
+/* ── Header ── */
+header {
+  font-family: 'Courier Prime', 'Courier New', Courier, monospace;
+  border-bottom: 1px dashed var(--ink);
+  padding-bottom: 0.75rem;
+  margin-bottom: 0;
+}
+
+h1 {
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 1.5rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.tag {
+  color: var(--mid);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tag::before { content: '* '; }
+.tag::after  { content: ' *'; }
+
+.back-link, .create-link {
+  font-size: 0.75rem;
+  color: var(--mid);
+  letter-spacing: 0.04em;
+}
+.back-link a, .create-link a { color: var(--ink); }
+
+/* ── Buttons ── */
+button {
+  font-family: inherit;
+  background: var(--ink);
+  color: var(--bg);
+  border-radius: 0;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  padding: 0.55rem 1.1rem;
+}
+button.ghost {
+  background: transparent;
+  color: var(--ink);
+  border: 1px dashed var(--ink);
+}
+button.ghost:hover { background: rgba(26,18,9,.07); }
+
+/* ── Search bar ── */
+.search-bar {
+  gap: 6px;
+}
+
+.search-bar input[type=search] {
+  font-family: inherit;
+  font-size: 0.9rem;
+  background: var(--bg);
+  border: 1px dashed var(--ink);
+  border-radius: 0;
+  padding: 0.55rem 0.75rem;
+  color: var(--ink);
+}
+.search-bar input[type=search]::placeholder { color: var(--mid); }
+
+.search-bar button {
+  border-radius: 0;
+}
+
+.search-toggle {
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  color: var(--mid);
+}
+
+/* ── Search status ── */
+.search-status {
+  font-size: 0.75rem;
+  color: var(--mid);
+  letter-spacing: 0.04em;
+}
+
+/* ── Result tiles ── */
+.card-tile {
+  background: var(--bg);
+  border: 1px dashed var(--line);
+  border-radius: 0;
+  box-shadow: none;
+}
+.card-tile:hover {
+  border-color: var(--ink);
+  box-shadow: none;
+  transform: none;
+}
+
+.tile-name {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.tile-type {
+  color: var(--mid);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+}
+
+/* ── Output / advanced panels ── */
+fieldset.output {
+  border: 1px dashed var(--ink);
+  border-radius: 0;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+}
+
+fieldset.output legend {
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+details.advanced summary {
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--mid);
+}
+
+select, input[type=range] {
+  font-family: inherit;
+  font-size: 0.78rem;
+  border: 1px dashed var(--line);
+  border-radius: 0;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+/* ── Create form ── */
+#view-create {
+  gap: 1.25rem;
+}
+
+/* Card form — keep the MTG card shape, but receipt-coloured */
+.card-form {
+  border: 1px dashed var(--ink);
+}
+
+/* Title row */
+.title-row {
+  background: var(--ink);
+  border-bottom: none;
+}
+
+.title-row input[name=name] {
+  font-family: 'Courier Prime', 'Courier New', Courier, monospace;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  background: transparent;
+  color: var(--bg);
+}
+.title-row input[name=name]::placeholder { color: #8a7a65; }
+
+.title-row input[name=cost] {
+  font-family: 'Courier Prime', 'Courier New', Courier, monospace;
+  background: transparent;
+  color: var(--bg);
+}
+.title-row input[name=cost]::placeholder { color: #8a7a65; }
+
+/* Type row */
+.type-row {
+  font-size: 0.75rem;
+  background: var(--ink);
+  color: var(--bg);
+  letter-spacing: 0.04em;
+}
+
+.prefix-hint { color: var(--mid); }
+
+/* Text row */
+.text-row {
+  background: #f3ede0;
+  border-top: 1px dashed var(--line);
+  border-bottom: 1px dashed var(--line);
+}
+
+.text-row textarea {
+  font-family: 'Courier Prime', 'Courier New', Courier, monospace;
+  font-size: 0.78rem;
+  background: transparent;
+  color: var(--ink);
+}
+
+/* P/T row */
+.pt-row {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+.pt-row input {
+  font-family: 'Courier Prime', 'Courier New', Courier, monospace;
+  font-weight: 700;
+  background: transparent;
+  color: var(--bg);
+}
+.pt-row input::placeholder { color: #8a7a65; }
+
+/* Art preview hint */
+.art-preview-hint {
+  font-family: 'Courier Prime', 'Courier New', Courier, monospace;
+  font-style: italic;
+  color: var(--mid);
+}
+
+/* AI controls */
+.ai-row textarea {
+  font-family: 'Courier Prime', 'Courier New', Courier, monospace;
+  font-size: 0.75rem;
+  background: rgba(250,246,238,.9);
+  border: 1px dashed var(--line);
+  border-radius: 0;
+}
+
+#ai-generate {
+  border-radius: 0;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+#ai-regenerate {
+  border-radius: 0;
+  border: 1px dashed var(--ink);
+  background: transparent;
+  color: var(--ink);
+}
+#ai-regenerate:hover { background: rgba(26,18,9,.07); }
+
+.art-controls select {
+  border: 1px dashed var(--line);
+  border-radius: 0;
+}
+
+/* Save / download buttons */
+#download, #search-save {
+  width: 100%;
+  margin-top: 0.75rem;
+  border-radius: 0;
+  letter-spacing: 0.1em;
+}
+
+/* Receipt tear-off dashes at the foot */
+body[data-page]::after {
+  content: '- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -';
+  display: block;
+  text-align: center;
+  color: var(--mid);
+  font-family: 'Courier Prime', 'Courier New', Courier, monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  padding: 1.5rem 1rem 0.5rem;
+  max-width: 540px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+/* ── Preview wrap (create page) ── */
+#preview-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
