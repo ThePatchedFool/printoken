@@ -119,10 +119,11 @@
     try {
       const { prompt, fields } = buildPrompt();
 
+      const seed = Math.floor(Math.random() * 2_147_483_647);
       const resp = await fetch(WORKER_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt, ...fields }),
+        body: JSON.stringify({ prompt, seed, ...fields }),
       });
 
       if (!resp.ok) {
