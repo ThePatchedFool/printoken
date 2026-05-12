@@ -11,7 +11,6 @@
   const decBtn    = document.getElementById('momir-dec');
   const incBtn    = document.getElementById('momir-inc');
   const rollBtn   = document.getElementById('momir-roll');
-  const rerollBtn = document.getElementById('momir-reroll');
   const statusEl  = document.getElementById('momir-status');
   const previewEl = document.getElementById('momir-preview');
   const cardNameEl = document.getElementById('momir-card-name');
@@ -51,7 +50,6 @@
 
   // ── Roll ──────────────────────────────────────────────────────────────────
   rollBtn.addEventListener('click', doRoll);
-  rerollBtn.addEventListener('click', doRoll);
 
   async function doRoll() {
     setLoading(true);
@@ -204,8 +202,7 @@
   }
 
   function setLoading(loading) {
-    rollBtn.disabled   = loading;
-    rerollBtn.disabled = loading;
+    rollBtn.disabled = loading;
     rollBtn.textContent = loading ? '…' : 'Roll';
   }
 })();
