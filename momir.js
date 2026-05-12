@@ -58,7 +58,7 @@
     statusEl.textContent = `Rolling CMC ${cmc}…`;
 
     // English paper creatures only; exclude token cards.
-    const q = `type:creature cmc=${cmc} game:paper lang:en -t:token`;
+    const q = `type:creature cmc=${cmc} game:paper lang:en -t:token legal:vintage`;
     const url = `${SCRYFALL_RANDOM}?q=${encodeURIComponent(q)}`;
 
     let card;
