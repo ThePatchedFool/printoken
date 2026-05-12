@@ -82,7 +82,7 @@
             <span class="result-set">${escapeHtml(card.set_name || card.set || '')}</span>
           </span>
         `;
-        tile.addEventListener('click', () => importFace(card, face));
+        tile.addEventListener('click', () => importCard(card));
         resultsEl.appendChild(tile);
       }
     }
@@ -105,9 +105,8 @@
   const pane = document.getElementById('search-pane');
   const preview = document.getElementById('search-preview');
   const previewName = document.getElementById('search-preview-name');
-  const previewCanvas = document.getElementById('search-canvas');
+  const canvasesEl = document.getElementById('search-canvases');
   const backBtn = document.getElementById('search-back');
-  const saveBtn = document.getElementById('search-save');
   const paperSel = preview.querySelector('select[name=search-paper]');
   const dpiSel = preview.querySelector('select[name=search-dpi]');
   const algoSel = preview.querySelector('select[name=search-algo]');
@@ -115,70 +114,111 @@
   const sharpenInput = preview.querySelector('input[name=search-sharpen]');
   const densityOut = document.getElementById('search-density-out');
 
-  let currentCard = null;
-  let currentImage = null;
+  // [{ img: HTMLImageElement, name: string, canvas: HTMLCanvasElement }]
+  let currentFaces = [];
 
   backBtn.addEventListener('click', () => {
     preview.hidden = true;
     pane.hidden = false;
-    currentCard = null;
-    currentImage = null;
+    currentFaces = [];
   });
 
-  paperSel.addEventListener('change', repaintPreview);
-  dpiSel.addEventListener('change', repaintPreview);
-  algoSel.addEventListener('change', repaintPreview);
-  sharpenInput.addEventListener('change', repaintPreview);
+  paperSel.addEventListener('change', repaintAll);
+  dpiSel.addEventListener('change', repaintAll);
+  algoSel.addEventListener('change', repaintAll);
+  sharpenInput.addEventListener('change', repaintAll);
   densityInput.addEventListener('input', () => {
     densityOut.textContent = densityInput.value;
-    repaintPreview();
+    repaintAll();
   });
 
-  saveBtn.addEventListener('click', () => {
-    if (!currentImage) return;
-    window.Printoken.shareCanvas(previewCanvas, currentCard?.name || 'token');
-  });
+  // Load all faces of a card regardless of which tile was clicked.
+  async function importCard(card) {
+    statusEl.textContent = `Loading "${card.name}"…`;
+    const faces = facesOf(card);
 
-  // Full-card image from Scryfall → load with CORS → dither → fit to paper width.
-  async function importFace(card, face) {
-    const name = face.name || card.name;
-    statusEl.textContent = `Loading "${name}"…`;
-    const imgUrl = face.image_uris?.png || face.image_uris?.large || face.image_uris?.normal;
-    if (!imgUrl) { statusEl.textContent = 'No printable image for that card.'; return; }
-    try {
-      const img = await loadCorsImage(imgUrl);
-      currentCard = { ...card, name };
-      currentImage = img;
-      previewName.textContent = name;
-      pane.hidden = true;
-      preview.hidden = false;
-      statusEl.textContent = '';
-      repaintPreview();
-    } catch (err) {
-      console.error(err);
-      statusEl.textContent = `Failed to load image: ${err.message}`;
+    const settled = await Promise.allSettled(
+      faces.map(face => {
+        const url = face.image_uris?.png || face.image_uris?.large || face.image_uris?.normal;
+        return url ? loadCorsImage(url) : Promise.reject(new Error('no image'));
+      })
+    );
+
+    currentFaces = faces
+      .map((face, i) => ({
+        name: face.name || card.name,
+        img: settled[i].status === 'fulfilled' ? settled[i].value : null,
+      }))
+      .filter(f => f.img);
+
+    if (!currentFaces.length) {
+      statusEl.textContent = 'No printable image for that card.';
+      return;
+    }
+
+    previewName.textContent = card.name;
+    buildCanvases();
+    repaintAll();
+    pane.hidden = true;
+    preview.hidden = false;
+    statusEl.textContent = '';
+  }
+
+  function buildCanvases() {
+    canvasesEl.innerHTML = '';
+    const multiface = currentFaces.length > 1;
+    for (const face of currentFaces) {
+      const wrap = document.createElement('div');
+      wrap.className = 'momir-face'; // reuse identical layout styles
+
+      if (multiface) {
+        const label = document.createElement('p');
+        label.className = 'momir-face-label';
+        label.textContent = face.name;
+        wrap.appendChild(label);
+      }
+
+      const canvas = document.createElement('canvas');
+      canvas.className = 'momir-canvas';
+      canvas.setAttribute('aria-label', `${face.name} card preview`);
+      face.canvas = canvas;
+      wrap.appendChild(canvas);
+
+      const saveBtn = document.createElement('button');
+      saveBtn.type = 'button';
+      saveBtn.textContent = 'Save / Print image';
+      saveBtn.addEventListener('click', () => {
+        window.Printoken.shareCanvas(canvas, face.name);
+      });
+      wrap.appendChild(saveBtn);
+
+      canvasesEl.appendChild(wrap);
     }
   }
 
-  function repaintPreview() {
-    if (!currentImage) return;
+  function repaintAll() {
+    for (const face of currentFaces) {
+      if (face.canvas) repaintCanvas(face.canvas, face.img);
+    }
+  }
+
+  function repaintCanvas(canvas, img) {
+    if (!img) return;
     const paperMm = window.Printoken.PAPER_MM[paperSel.value] ?? 53;
     const dpi = parseInt(dpiSel.value, 10) || 203;
     const widthPx = Math.round((paperMm / 25.4) * dpi);
-    const aspect = currentImage.height / currentImage.width;
+    const aspect = img.height / img.width;
     const heightPx = Math.round(widthPx * aspect);
 
-    previewCanvas.width = widthPx;
-    previewCanvas.height = heightPx;
-    // On-screen size reflects paper width — capped to container width.
-    previewCanvas.style.width = `min(100%, ${paperMm * 4}px)`;
-    const ctx = previewCanvas.getContext('2d', { willReadFrequently: true });
+    canvas.width = widthPx;
+    canvas.height = heightPx;
+    canvas.style.width = `min(100%, ${paperMm * 4}px)`;
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
     ctx.fillStyle = '#fff';
     ctx.fillRect(0, 0, widthPx, heightPx);
-    ctx.drawImage(currentImage, 0, 0, widthPx, heightPx);
+    ctx.drawImage(img, 0, 0, widthPx, heightPx);
     const data = ctx.getImageData(0, 0, widthPx, heightPx);
 
-    // Density 0–100 → threshold 200–56 (higher density slider = more black ink).
     const density = parseInt(densityInput.value, 10);
     const threshold = Math.round(200 - density * 1.44);
     window.Printoken.ditherImage(data, {

@@ -175,16 +175,13 @@ button.ghost, a.ghost {
   font-family: inherit;
 }
 button.ghost:hover, a.ghost:hover { background: #eee; }
-#search-canvas {
-  background: #fff;
-  border: 1px solid var(--line);
-  border-radius: 4px;
-  width: min(100%, 320px);
-  height: auto;
-  image-rendering: pixelated;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+#search-canvases {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  width: 100%;
 }
-#search-save { width: 100%; max-width: 320px; }
 
 details.advanced {
   width: 100%;
