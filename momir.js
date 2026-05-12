@@ -25,7 +25,7 @@
   const densityOut  = document.getElementById('momir-density-out');
 
   // ── State ─────────────────────────────────────────────────────────────────
-  let cmc = 3;
+  let cmc = 0;
   // [{ canvas: HTMLCanvasElement, img: HTMLImageElement, name: string }]
   let currentFaces = [];
 
