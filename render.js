@@ -638,7 +638,7 @@ function setInputValue(name, value) {
 // Resize a P/T input to fit its content, expanding leftward (the box is
 // right-anchored so it naturally grows toward the left).
 function sizePtInput(el) {
-  el.style.width = Math.max(el.value.length, 1) + 'ch';
+  el.style.width = (Math.max(el.value.length, 1) + 1) + 'ch';
 }
 
 // Inject an already-loaded HTMLImageElement as the card art and re-render.

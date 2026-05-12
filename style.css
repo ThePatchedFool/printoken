@@ -602,7 +602,7 @@ fieldset.colors label:has(input:checked):hover { background: #ddd; }
   z-index: 5;
   box-shadow: 0 2px 6px rgba(0,0,0,0.06);
 }
-.pt-row input { min-width: 1.5ch; width: 1.5ch; padding: 2px 4px; text-align: center; font-weight: 700; border: 0; background: transparent; font-size: 1rem; }
+.pt-row input { min-width: 2.5ch; width: 2.5ch; padding: 2px 4px; text-align: center; font-weight: 700; border: 0; background: transparent; font-size: 1rem; }
 .pt-row input:focus { outline: 1px solid #111; }
 .pt-row .slash { font-weight: 700; color: #999; padding: 0 1px; }
 
