@@ -136,7 +136,7 @@
 
       const saveBtn = document.createElement('button');
       saveBtn.type = 'button';
-      saveBtn.textContent = 'Save image';
+      saveBtn.textContent = 'Save / Print image';
       saveBtn.addEventListener('click', () => {
         window.Printoken.shareCanvas(canvas, face.name);
       });
