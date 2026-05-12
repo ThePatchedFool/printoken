@@ -81,12 +81,9 @@ main {
   flex-wrap: wrap;
 }
 .page-nav a.ghost {
-  font: inherit;
-  font-size: 0.8rem;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
-  padding: 0.45rem 0.9rem;
   min-height: 44px; /* comfortable tap target */
 }
 
@@ -168,14 +165,16 @@ main {
   font-weight: 600;
 }
 .preview-bar #search-preview-name { font-size: 1rem; color: #111; }
-button.ghost {
+button.ghost, a.ghost {
   background: transparent;
   color: #111;
   border: 1px solid var(--line);
   padding: 0.45rem 0.8rem;
   font-weight: 500;
+  font-size: 0.8rem;
+  font-family: inherit;
 }
-button.ghost:hover { background: #eee; }
+button.ghost:hover, a.ghost:hover { background: #eee; }
 #search-canvas {
   background: #fff;
   border: 1px solid var(--line);
@@ -812,12 +811,12 @@ button {
   font-size: 0.78rem;
   padding: 0.55rem 1.1rem;
 }
-button.ghost {
+button.ghost, a.ghost {
   background: transparent;
   color: var(--ink);
   border: 1px dashed var(--ink);
 }
-button.ghost:hover { background: rgba(26,18,9,.07); }
+button.ghost:hover, a.ghost:hover { background: rgba(26,18,9,.07); }
 
 /* ── Search bar ── */
 .search-bar {
