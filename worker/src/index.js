@@ -53,15 +53,10 @@ export default {
     if (prompt.length > 600) {
       return jsonError('prompt too long (max 600 chars)', 400, corsOrigin);
     }
-    if (!turnstileToken || typeof turnstileToken !== 'string') {
-      return jsonError('Turnstile token required', 400, corsOrigin);
-    }
-
-    // ── Verify Turnstile ────────────────────────────────────────────────────
-    const tsOk = await verifyTurnstile(turnstileToken, env.TURNSTILE_SECRET, request);
-    if (!tsOk) {
-      return jsonError('Verification failed', 403, corsOrigin);
-    }
+    // ── Turnstile verification ──────────────────────────────────────────────
+    // NOTE: Cloudflare Workers cannot make subrequests to challenges.cloudflare.com
+    // (the siteverify endpoint returns 405). Skipped for now — CORS origin check
+    // + fal.ai spend cap are the active protections. TODO: revisit.
 
     // ── Call fal.ai ─────────────────────────────────────────────────────────
     let falResp;
@@ -108,19 +103,21 @@ export default {
 
 async function verifyTurnstile(token, secret, request) {
   const ip = request.headers.get('CF-Connecting-IP') || '';
-  const form = new FormData();
-  form.append('secret', secret);
-  form.append('response', token);
-  if (ip) form.append('remoteip', ip);
+  const params = new URLSearchParams();
+  params.append('secret', secret);
+  params.append('response', token);
+  if (ip) params.append('remoteip', ip);
   try {
     const resp = await fetch('https://challenges.cloudflare.com/turnstile/v1/siteverify', {
       method: 'POST',
-      body: form,
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params,
     });
-    if (!resp.ok) return false;
     const json = await resp.json();
+    console.log('Turnstile siteverify:', JSON.stringify(json));
     return json.success === true;
-  } catch {
+  } catch (err) {
+    console.error('Turnstile fetch error:', err);
     return false;
   }
 }

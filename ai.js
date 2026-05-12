@@ -79,7 +79,7 @@
 
   function setLoading(loading) {
     generateBtn.disabled = loading;
-    generateBtn.textContent = loading ? 'Generating…' : '✦ Generate art';
+    generateBtn.textContent = loading ? '…' : '✦ Generate';
     if (regenBtn) regenBtn.disabled = loading;
   }
 

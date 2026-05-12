@@ -543,10 +543,10 @@ for (const el of form.querySelectorAll('input, textarea, select')) {
   el.addEventListener(evt, e => {
     if (el.name === 'art') {
       const file = el.files?.[0];
-      if (!file) { state.art = null; safeRender(); return; }
+      if (!file) { window.Printoken.setArt(null); return; }
       const img = new Image();
-      img.onload = () => { state.art = img; safeRender(); };
-      img.onerror = () => { state.art = null; safeRender(); };
+      img.onload = () => { window.Printoken.setArt(img); };
+      img.onerror = () => { window.Printoken.setArt(null); };
       img.src = URL.createObjectURL(file);
       return;
     }
@@ -634,9 +634,23 @@ function setInputValue(name, value) {
 }
 
 // Inject an already-loaded HTMLImageElement as the card art and re-render.
-// Called by ai.js after a successful generation.
+// Also updates the in-card art preview so both views stay in sync.
+// Called by ai.js after generation, and by the file-upload listener below.
 window.Printoken.setArt = function setArt(img) {
   state.art = img || null;
+  const previewImg  = document.getElementById('art-preview-img');
+  const previewHint = document.getElementById('art-preview-hint');
+  if (previewImg) {
+    if (img) {
+      previewImg.src = img.src;
+      previewImg.hidden = false;
+      if (previewHint) previewHint.hidden = true;
+    } else {
+      previewImg.hidden = true;
+      previewImg.src = '';
+      if (previewHint) previewHint.hidden = false;
+    }
+  }
   safeRender();
 };
 

@@ -24,11 +24,15 @@
       </fieldset>
 
       <fieldset class="card-row art-row">
-        <input type="file" name="art" accept="image/*" aria-label="Art">
-        <div class="ai-panel">
-          <textarea name="ai-desc" rows="2" placeholder="Describe the art… (optional)" aria-label="Art description for AI generation"></textarea>
-          <div class="ai-controls">
-            <button type="button" id="ai-generate">✦ Generate art</button>
+        <div class="art-preview" id="art-preview">
+          <img id="art-preview-img" alt="Token art" hidden>
+          <span class="art-preview-hint" id="art-preview-hint">art</span>
+        </div>
+        <div class="art-controls">
+          <input type="file" name="art" accept="image/*" aria-label="Art">
+          <div class="ai-row">
+            <textarea name="ai-desc" rows="1" placeholder="Describe the art…" aria-label="Art description for AI generation"></textarea>
+            <button type="button" id="ai-generate">✦ Generate</button>
             <button type="button" id="ai-regenerate" class="ghost" hidden aria-label="Regenerate">↺</button>
           </div>
           <p class="ai-status" id="ai-status" hidden></p>
