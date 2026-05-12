@@ -1,0 +1,15 @@
+# Proprietary / licensed fonts — do NOT commit
+fonts/beleren-bold_P1.01.ttf
+fonts/MatrixBold.ttf
+fonts/mplantin.ttf
+fonts/mplantinit.ttf
+
+# MSE frame art (proprietary template)
+template-m15-token/
+
+# macOS noise
+.DS_Store
+
+# Editor
+.vscode/
+*.swp

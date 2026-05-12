@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#111">
+<title>Printoken — Create a custom token</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-page="create">
+<header>
+  <a class="logo" href="index.html"><h1>Printoken</h1></a>
+  <p class="tag">Print MTG tokens.</p>
+  <p class="back-link"><a href="index.html">← Search instead</a></p>
+</header>
+
+<main>
+  <section id="view-create">
+    <form id="form" autocomplete="off">
+     <div class="card-form">
+      <fieldset class="card-row title-row">
+        <input class="grow" type="text" name="name" placeholder="Token name" aria-label="Name">
+        <input class="cost" type="text" name="cost" placeholder="2R" aria-label="Mana cost">
+      </fieldset>
+
+      <fieldset class="card-row art-row">
+        <input type="file" name="art" accept="image/*" aria-label="Art">
+        <p class="hint">AI generation coming soon.</p>
+      </fieldset>
+
+      <fieldset class="card-row type-row">
+        <span class="prefix-hint">Token …</span>
+        <div class="tagpicker grow" data-field="types" data-placeholder="Type…" aria-label="Types"></div>
+        <input type="hidden" name="types" value="[]">
+        <span class="dash">—</span>
+        <div class="tagpicker grow" data-field="subtypes" data-placeholder="Subtype…" aria-label="Subtypes"></div>
+        <input type="hidden" name="subtypes" value="[]">
+        <fieldset class="colors" aria-label="Color identity">
+          <label><input type="checkbox" name="color" value="W"> W</label>
+          <label><input type="checkbox" name="color" value="U"> U</label>
+          <label><input type="checkbox" name="color" value="B"> B</label>
+          <label><input type="checkbox" name="color" value="R"> R</label>
+          <label><input type="checkbox" name="color" value="G"> G</label>
+          <label><input type="checkbox" name="color" value="C"> C</label>
+        </fieldset>
+      </fieldset>
+
+      <fieldset class="card-row text-row">
+        <textarea class="rules" name="rules" placeholder="Rules text — e.g. Flying, Haste" aria-label="Rules text"></textarea>
+        <textarea class="flavor" name="flavor" placeholder="Flavor text" aria-label="Flavor text"></textarea>
+      </fieldset>
+
+      <fieldset class="card-row pt-row" aria-label="Power and toughness">
+        <input type="text" name="power" inputmode="numeric" placeholder="1" aria-label="Power">
+        <span class="slash">/</span>
+        <input type="text" name="toughness" inputmode="numeric" placeholder="1" aria-label="Toughness">
+      </fieldset>
+     </div><!-- /.card-form -->
+
+      <fieldset class="output">
+        <legend>Output</legend>
+        <label>Paper width
+          <select name="paper">
+            <option value="53">53 mm (Phomemo)</option>
+            <option value="80">80 mm</option>
+            <option value="custom-mtg">63 mm (standard MTG)</option>
+          </select>
+        </label>
+        <label>DPI
+          <select name="dpi">
+            <option value="203" selected>203 (thermal)</option>
+            <option value="300">300</option>
+          </select>
+        </label>
+      </fieldset>
+      <details class="advanced">
+        <summary>Advanced</summary>
+        <div class="advanced-grid">
+          <label>Style
+            <select name="algo">
+              <option value="none" selected>None — let the printer dither</option>
+              <option value="atkinson">Crisp (Atkinson)</option>
+              <option value="floyd">Detailed (Floyd–Steinberg)</option>
+              <option value="threshold">Stark (threshold only)</option>
+            </select>
+          </label>
+          <label>Density
+            <input type="range" name="density" min="0" max="100" value="50">
+            <output for="density" id="density-out">50</output>
+          </label>
+          <label class="inline">
+            <input type="checkbox" name="sharpen"> Sharpen
+          </label>
+        </div>
+      </details>
+    </form>
+
+    <section id="preview-wrap">
+      <canvas id="preview" width="424" height="594" aria-label="Token preview"></canvas>
+      <button id="download" type="button">Save image</button>
+    </section>
+  </section>
+</main>
+
+<script src="utils.js" defer></script>
+<script src="catalog.js" defer></script>
+<script src="tagpicker.js" defer></script>
+<script src="render.js" defer></script>
+</body>
+</html>

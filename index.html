@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#111">
+<title>Printoken — Search MTG tokens</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-page="search">
+<header>
+  <a class="logo" href="index.html"><h1>Printoken</h1></a>
+  <p class="tag">Print MTG tokens.</p>
+</header>
+
+<main>
+  <section id="view-search">
+    <div id="search-pane">
+      <form id="search-form" class="search-bar" autocomplete="off">
+        <input type="search" name="q" placeholder="Search e.g. Goblin, Treasure, Saproling" aria-label="Search" autofocus>
+        <label class="search-toggle"><input type="checkbox" name="tokens-only" checked> Tokens &amp; helpers only</label>
+        <button type="submit">Search</button>
+      </form>
+      <div id="search-status" class="search-status" aria-live="polite"></div>
+      <p class="create-link"><a href="create.html">Need a custom token? Make one →</a></p>
+      <div id="search-results" class="search-results"></div>
+    </div>
+
+    <div id="search-preview" hidden>
+      <div class="preview-bar">
+        <button type="button" id="search-back" class="ghost">← Back to results</button>
+        <span id="search-preview-name"></span>
+      </div>
+      <canvas id="search-canvas" aria-label="Dithered card preview"></canvas>
+      <fieldset class="output">
+        <legend>Output</legend>
+        <label>Paper width
+          <select name="search-paper">
+            <option value="53">53 mm (Phomemo)</option>
+            <option value="80">80 mm</option>
+            <option value="custom-mtg">63 mm (standard MTG)</option>
+          </select>
+        </label>
+        <label>DPI
+          <select name="search-dpi">
+            <option value="203" selected>203 (thermal)</option>
+            <option value="300">300</option>
+          </select>
+        </label>
+      </fieldset>
+      <details class="advanced">
+        <summary>Advanced</summary>
+        <div class="advanced-grid">
+          <label>Style
+            <select name="search-algo">
+              <option value="none" selected>None — let the printer dither</option>
+              <option value="atkinson">Crisp (Atkinson)</option>
+              <option value="floyd">Detailed (Floyd–Steinberg)</option>
+              <option value="threshold">Stark (threshold only)</option>
+            </select>
+          </label>
+          <label>Density
+            <input type="range" name="search-density" min="0" max="100" value="50">
+            <output for="search-density" id="search-density-out">50</output>
+          </label>
+          <label class="inline">
+            <input type="checkbox" name="search-sharpen"> Sharpen
+          </label>
+        </div>
+      </details>
+      <button type="button" id="search-save">Save image</button>
+    </div>
+  </section>
+</main>
+
+<script src="utils.js" defer></script>
+<script src="search.js" defer></script>
+</body>
+</html>

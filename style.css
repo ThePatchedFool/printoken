@@ -1,0 +1,568 @@
+@font-face {
+  font-family: "PrintokenTitle";
+  src: url("fonts/free/Cinzel.ttf") format("truetype-variations"),
+       url("fonts/free/Cinzel.ttf") format("truetype");
+  font-weight: 400 900;
+  font-display: block;
+}
+@font-face {
+  font-family: "PrintokenBody";
+  src: url("fonts/free/EBGaramond.ttf") format("truetype-variations"),
+       url("fonts/free/EBGaramond.ttf") format("truetype");
+  font-weight: 400 800;
+  font-style: normal;
+  font-display: block;
+}
+@font-face {
+  font-family: "PrintokenBody";
+  src: url("fonts/free/EBGaramond-Italic.ttf") format("truetype-variations"),
+       url("fonts/free/EBGaramond-Italic.ttf") format("truetype");
+  font-weight: 400 800;
+  font-style: italic;
+  font-display: block;
+}
+@font-face {
+  font-family: "PrintokenMana";
+  src: url("fonts/free/Mana.ttf") format("truetype");
+  font-display: block;
+}
+
+:root {
+  --bg: #f6f5f1;
+  --ink: #111;
+  --line: #d6d3cb;
+  --accent: #111;
+  font-family: -apple-system, BlinkMacSystemFont, "Inter", "Helvetica Neue", sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: 4rem;
+}
+
+header {
+  padding: 1rem 1rem 0.5rem;
+  text-align: center;
+}
+header .logo { color: inherit; text-decoration: none; }
+header .logo:hover { opacity: 0.85; }
+h1 { margin: 0; font-size: 1.4rem; letter-spacing: 0.02em; }
+.tag { margin: 0.25rem 0 0; color: #666; font-size: 0.85rem; }
+
+main {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.view {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 800px) {
+  #view-create { grid-template-columns: 1fr 1fr; align-items: start; }
+  #view-create #preview-wrap { position: sticky; top: 1rem; }
+}
+
+/* ----- Cross-page navigation ----- */
+
+.create-link, .back-link {
+  text-align: center;
+  margin: 0.25rem 0 1rem;
+  font-size: 0.9rem;
+}
+.create-link a, .back-link a { color: #111; }
+.back-link { margin: 0.4rem 0 0; font-size: 0.8rem; color: #666; }
+
+/* ----- Search ----- */
+
+.search-bar {
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: 1fr;
+  max-width: 600px;
+  margin: 0 auto 1rem;
+}
+@media (min-width: 600px) {
+  .search-bar { grid-template-columns: 1fr auto auto; align-items: center; }
+}
+.search-bar input[type=search] {
+  padding: 0.7rem 0.9rem;
+  font: inherit;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  min-width: 0;
+}
+.search-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: #555;
+  user-select: none;
+}
+.search-bar button {
+  padding: 0.7rem 1.2rem;
+}
+
+.search-status { text-align: center; color: #666; font-size: 0.85rem; min-height: 1.2em; margin: 0.25rem 0 0.75rem; }
+
+.search-results {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  max-width: 1000px;
+  margin: 0 auto;
+}
+.result-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.4rem;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+.result-tile:hover, .result-tile:focus { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); outline: none; }
+.result-tile img { width: 100%; height: auto; border-radius: 6px; display: block; }
+.result-meta { display: flex; flex-direction: column; gap: 1px; padding: 0.1rem 0.2rem 0.3rem; }
+.result-name { font-size: 0.85rem; font-weight: 600; line-height: 1.2; }
+.result-set { font-size: 0.7rem; color: #888; }
+
+#search-preview:not([hidden]) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  max-width: 480px;
+  margin: 0 auto;
+}
+.preview-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 0.75rem;
+  font-weight: 600;
+}
+.preview-bar #search-preview-name { font-size: 1rem; color: #111; }
+button.ghost {
+  background: transparent;
+  color: #111;
+  border: 1px solid var(--line);
+  padding: 0.45rem 0.8rem;
+  font-weight: 500;
+}
+button.ghost:hover { background: #eee; }
+#search-canvas {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  width: min(100%, 320px);
+  height: auto;
+  image-rendering: pixelated;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+#search-save { width: 100%; max-width: 320px; }
+
+details.advanced {
+  width: 100%;
+  max-width: 320px;
+  margin: 0.75rem auto 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  overflow: hidden;
+}
+details.advanced > summary {
+  cursor: pointer;
+  padding: 0.5rem 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #444;
+  user-select: none;
+  list-style: none;
+}
+details.advanced > summary::after { content: " ▾"; color: #888; font-weight: 400; }
+details.advanced[open] > summary::after { content: " ▴"; }
+.advanced-grid {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0.75rem 0.8rem 0.9rem;
+  border-top: 1px solid var(--line);
+}
+.advanced-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  color: #555;
+}
+.advanced-grid label.inline { flex-direction: row; align-items: center; gap: 0.5rem; }
+.advanced-grid input[type=range] { width: 100%; }
+.advanced-grid output { font-size: 0.7rem; color: #888; align-self: flex-end; }
+
+/* ----- Card-shaped form, proportions from M15 token template ----- */
+/* Template grid: 375 × 523, with regions
+     name  y 26-54   (28u)
+     art   y 62-351  (289u)
+     type  y 354-374 (20u)
+     text  y 388-482 (94u)
+     pt    y 466-508 (overlaps text bottom-right)
+   We mirror the proportions in the form. Gaps approximate the template's
+   empty bands between regions (8u, 3u, 14u). */
+
+.card-form {
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  background: #fff;
+  border: 2px solid #111;
+  border-radius: 18px;
+  padding: 0;
+  display: grid;
+  /* Loosely follows the M15 template proportions, but the name and type rows
+     get a UX-friendly minimum so their controls aren't squashed. */
+  grid-template-rows: 44fr 8fr 260fr 14fr 56fr 14fr 130fr;
+  grid-template-columns: 1fr;
+  gap: 0;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.08);
+  position: relative;
+  /* Card aspect: 375 × 523. */
+  aspect-ratio: 375 / 523;
+  min-height: 580px;
+  overflow: hidden; /* clip any row corners against the rounded card edge */
+}
+
+/* Spacer rows (the gaps) — empty divs would work, but we let grid eat them */
+
+.card-row {
+  margin: 0;
+  padding: 4px 8px;
+  border: 0;
+  border-radius: 0;
+  background: #fafaf7;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 0; /* allow rows to shrink to grid track */
+  min-width: 0;
+  overflow: hidden;
+}
+
+.title-row { grid-row: 1; }
+.art-row   { grid-row: 3; }
+.type-row  { grid-row: 5; }
+.text-row  { grid-row: 7; }
+
+.card-row legend { padding: 0 0.3rem; font-weight: 600; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; color: #777; }
+
+label {
+  display: block;
+  font-size: 0.7rem;
+  color: #666;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  min-width: 0;
+}
+
+label.grow { flex: 1 1 auto; min-width: 0; }
+
+input[type=text], input[type=file], textarea, select {
+  display: block;
+  width: 100%;
+  margin-top: 1px;
+  padding: 0.3rem 0.45rem;
+  font: inherit;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  color: var(--ink);
+}
+textarea { resize: none; height: 100%; }
+
+/* Title row: name + cost — slim, dark band like a card title */
+.title-row { background: #111; padding: 4px 6px; gap: 6px; }
+.title-row input { background: #fff; padding: 3px 8px; font-weight: 600; border: 0; }
+.title-row .grow { flex: 1 1 auto; min-width: 0; }
+.title-row .cost { width: 100px; flex: 0 0 auto; font-weight: 400; text-align: right; font-family: "Courier New", monospace; }
+
+/* Art row: dominates the card visually, like the real art window */
+.art-row {
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  padding: 10px;
+  background: repeating-linear-gradient(45deg, #f4f3ee, #f4f3ee 6px, #ecebe5 6px, #ecebe5 12px);
+  text-align: center;
+  gap: 6px;
+}
+.art-row input[type=file] { background: rgba(255,255,255,0.85); border-style: dashed; }
+.art-row .hint { margin: 0; font-size: 0.65rem; color: #888; }
+
+/* Type row: thin band, type+subtype+colors all inline */
+.type-row { background: #111; padding: 4px 6px; gap: 6px; align-items: center; }
+.type-row .tagpicker { background: #fff; min-height: 26px; padding: 2px; }
+.type-row .grow { flex: 1 1 auto; min-width: 0; }
+.type-row .prefix-hint,
+.type-row .dash {
+  display: inline-block;
+  color: #ccc;
+  font-size: 0.7rem;
+  text-transform: none;
+  letter-spacing: 0;
+  flex: 0 0 auto;
+  padding: 0 2px;
+}
+
+/* Text row: rules + flavor — gets the largest slice after art */
+.text-row {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  padding: 8px 10px 36px; /* leave room for the PT pill bottom-right */
+  position: relative;
+  background: #fff;
+}
+.text-row textarea {
+  min-height: 28px;
+  border: 0;
+  padding: 4px 0;
+  background: transparent;
+  font-size: 0.9rem;
+  line-height: 1.3;
+  outline: none;
+  font-family: inherit;
+  color: var(--ink);
+  width: 100%;
+}
+.text-row textarea:focus { background: #f7f6f1; }
+.text-row textarea::placeholder { color: #888; opacity: 1; }
+.text-row textarea.rules  { flex: 2 1 0; }
+.text-row textarea.flavor {
+  flex: 1 1 0;
+  font-style: italic;
+  border-top: 1px dashed var(--line);
+  padding-top: 6px;
+  margin-top: 4px;
+}
+.text-row textarea.flavor::placeholder { font-style: italic; color: #aaa; }
+
+/* Tag picker */
+.tagpicker {
+  margin-top: 4px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 4px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+  position: relative;
+  min-height: 34px;
+}
+.tagpicker .chips {
+  display: contents;
+}
+.tagpicker .chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #111;
+  color: #fff;
+  font-size: 0.75rem;
+  padding: 2px 4px 2px 8px;
+  border-radius: 999px;
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 500;
+}
+.tagpicker .chip-x {
+  background: transparent;
+  color: #fff;
+  border: 0;
+  font-size: 0.95rem;
+  line-height: 1;
+  padding: 0 4px;
+  cursor: pointer;
+  border-radius: 999px;
+}
+.tagpicker .chip-x:hover { background: rgba(255,255,255,0.15); }
+
+.tagpicker .add-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 1px dashed #888;
+  background: transparent;
+  color: #555;
+  border-radius: 999px;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+}
+.tagpicker .add-btn:hover { background: #eee; color: #111; border-color: #555; }
+.tagpicker .search-wrap[hidden] { display: none; }
+
+.tagpicker .search-wrap {
+  position: relative;
+  flex: 1 1 100px;
+  min-width: 100px;
+}
+.tagpicker .tagsearch {
+  border: 0;
+  outline: 0;
+  padding: 4px 6px;
+  margin: 0;
+  width: 100%;
+  background: transparent;
+  font-size: 0.85rem;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--ink);
+}
+/* Tagpicker popover is portaled to <body> so it escapes the clipped card. */
+.tagpicker-popover {
+  position: fixed;
+  top: -9999px;
+  left: -9999px;
+  z-index: 1000;
+  list-style: none;
+  margin: 0;
+  padding: 4px 0;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  max-height: 220px;
+  overflow-y: auto;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  font-size: 0.85rem;
+  color: var(--ink);
+}
+.tagpicker-popover li {
+  padding: 4px 10px;
+  cursor: pointer;
+}
+.tagpicker-popover li.active,
+.tagpicker-popover li:hover { background: #eee; }
+.tagpicker-popover li.custom { color: #555; font-style: italic; }
+.tagpicker-popover li.custom.active { color: #111; background: #ffe9b3; }
+
+fieldset.colors {
+  border: 1px solid #444;
+  border-radius: 6px;
+  padding: 2px 4px;
+  margin: 0;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 2px;
+  background: #1a1a1a;
+  flex: 0 0 auto;
+}
+fieldset.colors label {
+  display: inline-flex; align-items: center; justify-content: center;
+  margin: 0; color: #eee;
+  text-transform: none; font-size: 0.65rem; font-weight: 700;
+  width: 18px; height: 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  user-select: none;
+}
+fieldset.colors input { position: absolute; opacity: 0; pointer-events: none; }
+fieldset.colors label:has(input:checked) { background: #fff; color: #111; }
+fieldset.colors label:hover { background: #333; }
+fieldset.colors label:has(input:checked):hover { background: #ddd; }
+
+/* Text row: rules + flavor stacked */
+.text-row {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  min-height: 130px;
+}
+.text-row label { display: block; }
+
+/* P/T row: positioned to overlap the text row's bottom-right corner,
+   exactly like the P/T box on a real M15 card. */
+.pt-row {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  background: #fff;
+  border: 1.5px solid #111;
+  border-radius: 8px;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  z-index: 5;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+.pt-row input { width: 36px; padding: 2px 4px; text-align: center; font-weight: 700; border: 0; background: transparent; font-size: 1rem; }
+.pt-row input:focus { outline: 1px solid #111; }
+.pt-row .slash { font-weight: 700; color: #999; padding: 0 1px; }
+
+/* Output settings — separate panel below the card */
+.output {
+  width: 100%;
+  max-width: 420px;
+  margin: 16px auto 0;
+  padding: 0.75rem 1rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  display: grid;
+  gap: 0.6rem;
+  grid-template-columns: 1fr 1fr;
+}
+.output legend { grid-column: 1 / -1; padding: 0 0.4rem; font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: #555; }
+
+.hint { font-size: 0.75rem; color: #888; margin: 0.4rem 0 0; }
+
+#preview-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+#preview {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  width: min(100%, 424px);
+  height: auto;
+  image-rendering: pixelated;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+button {
+  font: inherit;
+  background: var(--ink);
+  color: #fff;
+  border: 0;
+  padding: 0.7rem 1.4rem;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+}
+button:active { transform: translateY(1px); }
